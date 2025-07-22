@@ -8,15 +8,10 @@ except ImportError:
     st.error("⚠️ Whisper is not installed. Please run: pip install faster-whisper")
 
 import tempfile
-import subprocess
-import json
 import os
 import base64
 import requests, uuid
 from dotenv import load_dotenv
-import re
-# Save MOM as PDF
-import unicodedata
 load_dotenv()
 
 def save_mom_to_txt(mom_output, output_path="mom_output.txt"):
