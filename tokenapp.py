@@ -12,7 +12,6 @@ import subprocess
 import json
 import os
 import base64
-from fpdf import FPDF
 import requests, uuid
 from dotenv import load_dotenv
 import re
