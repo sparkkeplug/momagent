@@ -13,38 +13,10 @@ import re
 import unicodedata
 load_dotenv()
 
-def sanitize_text(text):
-    # Remove control characters and normalize
-    text = unicodedata.normalize("NFKD", text)
-    text = re.sub(r'[^\x00-\x7F]+', ' ', text)  # Remove non-ASCII chars
-    text = re.sub(r'\s+', ' ', text)  # Clean excessive whitespace
-    return text.strip()
-
-def save_mom_to_pdf(text, filename="MOM_Output.pdf"):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_auto_page_break(auto=True, margin=15)
-    pdf.set_font("Arial", size=12)
-
-    for line in text.split('\n'):
-        try:
-            clean_line = sanitize_text(line)
-            if not clean_line:
-                continue
-            # Break very long unbreakable strings
-            words = re.findall(r'\S{80,}|.{1,80}(?:\s+|$)', clean_line)
-            for chunk in words:
-                pdf.multi_cell(0, 10, chunk)
-        except Exception as e:
-            # If error happens even when writing fallback line, use a space instead
-            print(f"Rendering error: {e} — skipping line.")
-            try:
-                pdf.multi_cell(0, 10, " ")
-            except:
-                pass
-
-    output_path = os.path.join(tempfile.gettempdir(), filename)
-    pdf.output(output_path)
+def save_mom_to_txt(mom_output, output_path="mom_output.txt"):
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(mom_output)
+    print(f"Text file saved to: {output_path}")
     return output_path
 
 
@@ -163,11 +135,11 @@ The MOM should be structured with the following sections. If any information is 
     with st.spinner("Generating MOM using model...."):
         mom_output = call_ollama_model(MOM_PROMPT)
 
-    pdf_path = save_mom_to_pdf(mom_output)
-    with open(pdf_path, "rb") as f:
-        base64_pdf = base64.b64encode(f.read()).decode('utf-8')
-        pdf_link = f'<a href="data:application/octet-stream;base64,{base64_pdf}" download="Minutes_of_Meeting.pdf">📄 Download MOM as PDF</a>'
-        st.markdown(pdf_link, unsafe_allow_html=True)
+    txt_path = save_mom_to_txt(mom_output)  # should return .txt path
+    with open(txt_path, "rb") as f:
+        base64_txt = base64.b64encode(f.read()).decode("utf-8")
+        txt_link = f'<a href="data:application/octet-stream;base64,{base64_txt}" download="Minutes_of_Meeting.txt">📄 Download MOM as Txt</a>'
+        st.markdown(txt_link, unsafe_allow_html=True)
 
     html_output_path = os.path.join(tempfile.gettempdir(), "MOM_Output.html")
     with open(html_output_path, "w", encoding="utf-8") as html_file:
