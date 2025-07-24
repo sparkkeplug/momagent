@@ -57,9 +57,9 @@ st.markdown("""
 
 # Choose input type
 if WHISPER_AVAILABLE:
-    input_option = st.radio("Choose your input type:", ["📁 Upload Audio (.mp3)", "📝 Upload Transcript (.txt)"])
+    input_option = st.radio("Choose your input type:", ["📁 Upload Audio (.mp3)", "📝 Upload Transcript (.txt or .docx)"])
 else:
-    input_option = st.radio("Choose your input type:", ["📝 Upload Transcript (.txt)"])
+    input_option = st.radio("Choose your input type:", ["📝 Upload Transcript (.txt or .docx)"])
     st.warning("⚠️ Audio transcription is not available. Please install faster-whisper: `pip install faster-whisper`")
 
 transcript = ""
@@ -85,7 +85,6 @@ if input_option == "📁 Upload Audio (.mp3)" and WHISPER_AVAILABLE:
         finally:
             os.remove(tmp_path)
 
-# Handle transcript input
 # Handle transcript input
 elif input_option == "📝 Upload Transcript (.txt or .docx)":
     txt_file = st.file_uploader("Upload transcript (.txt or .docx)", type=["txt", "docx"])
