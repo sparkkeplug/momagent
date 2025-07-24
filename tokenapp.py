@@ -86,10 +86,15 @@ if input_option == "📁 Upload Audio (.mp3)" and WHISPER_AVAILABLE:
             os.remove(tmp_path)
 
 # Handle transcript input
-elif input_option == "📝 Upload Transcript (.txt)":
-    txt_file = st.file_uploader("Upload transcript (.txt)", type=["txt"])
+# Handle transcript input
+elif input_option == "📝 Upload Transcript (.txt or .docx)":
+    txt_file = st.file_uploader("Upload transcript (.txt or .docx)", type=["txt", "docx"])
     if txt_file is not None:
-        transcript = txt_file.read().decode("utf-8")
+        if txt_file.name.endswith(".txt"):
+            transcript = txt_file.read().decode("utf-8")
+        elif txt_file.name.endswith(".docx"):
+            doc = Document(txt_file)
+            transcript = "\n".join([para.text for para in doc.paragraphs])
 
 # Process if transcript is ready
 if transcript:
