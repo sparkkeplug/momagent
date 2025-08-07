@@ -66,24 +66,24 @@ transcript = ""
 
 # Handle audio input
 if input_option == "📁 Upload Audio (.mp3)" and WHISPER_AVAILABLE:
-    '''audio_file = st.file_uploader("Upload meeting audio (.mp3)", type=["mp3"])
-    if audio_file is not None:
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
-            tmp.write(audio_file.read())
-            tmp_path = tmp.name
-        st.audio(audio_file, format='audio/mp3')
-        st.write("🔄 Transcribing audio using Whisper...")
+    #'''audio_file = st.file_uploader("Upload meeting audio (.mp3)", type=["mp3"])
+    #if audio_file is not None:
+     #   with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
+      #      tmp.write(audio_file.read())
+       #     tmp_path = tmp.name
+        #st.audio(audio_file, format='audio/mp3')
+        #st.write("🔄 Transcribing audio using Whisper...")
         
-        try:
+        #try:
             # Use faster-whisper instead
-            model = WhisperModel("base", device="cpu", compute_type="int8")
-            segments, info = model.transcribe(tmp_path, beam_size=5)
-            transcript = " ".join([segment.text for segment in segments])
-        except Exception as e:
-            st.error(f"Error during transcription: {str(e)}")
-            transcript = ""
-        finally:
-            os.remove(tmp_path)'''
+         #   model = WhisperModel("base", device="cpu", compute_type="int8")
+          #  segments, info = model.transcribe(tmp_path, beam_size=5)
+          #  transcript = " ".join([segment.text for segment in segments])
+        #except Exception as e:
+        #    st.error(f"Error during transcription: {str(e)}")
+        #    transcript = ""
+        #finally:
+        #    os.remove(tmp_path)'''
     
     audio_file = st.file_uploader("Upload meeting audio (.mp3)", type=["mp3"])
     if audio_file is not None:
@@ -115,8 +115,8 @@ if input_option == "📁 Upload Audio (.mp3)" and WHISPER_AVAILABLE:
             os.remove(tmp_path)
 
         # Display final transcript
-        st.subheader("📝 Timestamped Transcript")
-        st.text_area("Transcript", transcript, height=400)
+        #st.subheader("📝 Timestamped Transcript")
+        #st.text_area("Transcript", transcript, height=400)
 
 
 # Handle transcript input
@@ -260,4 +260,5 @@ The MOM should be structured with the following sections. If any information is 
     {message}</div>""", unsafe_allow_html=True)
         else:
             st.markdown(f"**{sender}:** {message}")
+
 
