@@ -66,7 +66,7 @@ transcript = ""
 
 # Handle audio input
 if input_option == "📁 Upload Audio (.mp3)" and WHISPER_AVAILABLE:
-    audio_file = st.file_uploader("Upload meeting audio (.mp3)", type=["mp3"])
+    '''audio_file = st.file_uploader("Upload meeting audio (.mp3)", type=["mp3"])
     if audio_file is not None:
         with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
             tmp.write(audio_file.read())
@@ -83,7 +83,41 @@ if input_option == "📁 Upload Audio (.mp3)" and WHISPER_AVAILABLE:
             st.error(f"Error during transcription: {str(e)}")
             transcript = ""
         finally:
+            os.remove(tmp_path)'''
+    
+    audio_file = st.file_uploader("Upload meeting audio (.mp3)", type=["mp3"])
+    if audio_file is not None:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as tmp:
+            tmp.write(audio_file.read())
+            tmp_path = tmp.name
+        st.audio(audio_file, format='audio/mp3')
+        st.write("🔄 Transcribing audio using Whisper...")
+        
+        try:
+            # Use faster-whisper instead
+            model = WhisperModel("base", device="cpu", compute_type="int8")
+            segments, info = model.transcribe(tmp_path, beam_size=5)
+
+            # Format each segment into timestamped MOM-style output
+            transcript_lines = []
+            for segment in segments:
+                start = round(segment.start, 1)
+                end = round(segment.end, 1)
+                text = segment.text.strip()
+                transcript_lines.append(f"{start:.1f}s → {end:.1f}s: {text}")
+
+            transcript = "\n".join(transcript_lines)
+
+        except Exception as e:
+            st.error(f"Error during transcription: {str(e)}")
+            transcript = ""
+        finally:
             os.remove(tmp_path)
+
+        # Display final transcript
+        st.subheader("📝 Timestamped Transcript")
+        st.text_area("Transcript", transcript, height=400)
+
 
 # Handle transcript input
 elif input_option == "📝 Upload Transcript (.txt or .docx)":
@@ -226,3 +260,4 @@ The MOM should be structured with the following sections. If any information is 
     {message}</div>""", unsafe_allow_html=True)
         else:
             st.markdown(f"**{sender}:** {message}")
+
